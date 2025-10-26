@@ -1,11 +1,11 @@
 # src/models.py
 from __future__ import annotations
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 import json
-from typing import Any, Dict, Optional
-
+from typing import Any, Dict, Optional, List
+from abc import ABC, abstractmethod
 @dataclass(frozen=True)
 class MarketDataPoint:
     """Represents a single tick of normalized market data."""
@@ -76,3 +76,38 @@ class Bond(Instrument):
 class ETF(Instrument):
     underlying_index: str
     expense_ratio: float
+
+class PortfolioComponent(ABC):
+    @abstractmethod
+    def get_value(self) -> float: ...
+    @abstractmethod
+    def get_positions(self) -> List["Position"]: ...
+
+@dataclass(frozen=True)
+class Position(PortfolioComponent):
+    symbol: str
+    quantity: float
+    price: float
+
+    def get_value(self) -> float:
+        return float(self.quantity) * float(self.price)
+
+    def get_positions(self) -> List["Position"]:
+        return [self]
+
+@dataclass
+class PortfolioGroup(PortfolioComponent):
+    name: str
+    children: List[PortfolioComponent] = field(default_factory=list)
+
+    def add(self, child: PortfolioComponent) -> None:
+        self.children.append(child)
+
+    def get_value(self) -> float:
+        return sum(c.get_value() for c in self.children)
+
+    def get_positions(self) -> List[Position]:
+        out: List[Position] = []
+        for c in self.children:
+            out.extend(c.get_positions())
+        return out
