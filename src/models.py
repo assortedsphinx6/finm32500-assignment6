@@ -6,7 +6,6 @@ from pathlib import Path
 import json
 from typing import Any, Dict, Optional
 
-
 @dataclass(frozen=True)
 class MarketDataPoint:
     """Represents a single tick of normalized market data."""
@@ -14,7 +13,6 @@ class MarketDataPoint:
     time: datetime
     price: float
     meta: Optional[Dict[str, Any]] = None
-
 
 class Config:
     """Singleton configuration loader."""
@@ -49,3 +47,32 @@ class Config:
             else:
                 return default
         return cur
+    
+
+@dataclass
+class Instrument:
+    """Base class for all instruments."""
+    symbol: str
+    name: str
+    instrument_type: str
+
+    def get_summary(self) -> str:
+        return f"{self.instrument_type}: {self.symbol} - {self.name}"
+
+
+@dataclass
+class Stock(Instrument):
+    exchange: str
+    currency: str
+
+
+@dataclass
+class Bond(Instrument):
+    coupon: float
+    maturity: str
+
+
+@dataclass
+class ETF(Instrument):
+    underlying_index: str
+    expense_ratio: float
