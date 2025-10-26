@@ -1,6 +1,7 @@
 # tests/test_singleton.py
 from datetime import datetime
-from src.models import Config, MarketDataPoint
+from src.models import MarketDataPoint
+from src.patterns.singleton import Config
 
 
 def test_config_is_singleton():
@@ -32,3 +33,18 @@ def test_market_data_point_fields():
     assert mdp.symbol == "AAPL"
     assert mdp.price == 150.25
     assert mdp.meta == {"source": "unit-test"}
+
+
+from src.patterns.singleton import Config, Singleton
+import json, tempfile, os
+
+def test_singleton_instance_identity():
+    c1 = Config()
+    c2 = Config()
+    assert c1 is c2  # same instance
+
+def test_config_reads_data(tmp_path):
+    path = tmp_path / "config.json"
+    path.write_text(json.dumps({"test": {"value": 123}}))
+    c = Config(path)
+    assert c.get_path("test", "value") == 123

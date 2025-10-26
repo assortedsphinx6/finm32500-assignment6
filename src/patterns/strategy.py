@@ -2,8 +2,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from typing import Sequence, List
 import pandas as pd # type: ignore
-
-from src.models import Config
+from src.patterns.singleton import Config
 
 
 class Strategy(ABC):

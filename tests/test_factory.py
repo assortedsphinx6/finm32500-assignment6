@@ -1,5 +1,5 @@
 # tests/test_factory.py
-import pytest
+import pytest # type: ignore
 from src.models import Stock, Bond, ETF
 from patterns.factory import InstrumentFactory
 
