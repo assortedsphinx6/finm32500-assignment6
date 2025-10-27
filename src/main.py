@@ -40,6 +40,7 @@ class StrategyTickAdapter:
         if last == 0:
             return []
         side = "BUY" if last > 0 else "SELL"
+        print(f"Signal detected → {side} {sym} @ {price}")
         return [{"symbol": sym, "side": side, "qty": 1, "price": price}]
 
 
@@ -54,11 +55,11 @@ def load_config():
 
 
 def main():
+    print("\n=== Starting Trading Simulation ===\n")
     cfg = load_config()
     symbols = cfg.get("symbols", ["AAPL", "MSFT", "TSLA"])
     sr_params = cfg.get("mean_reversion_params", {"lookback": 5})
 
-    # build strategy safely
     try:
         inner = MeanReversionStrategy(params=sr_params)
     except TypeError:
@@ -66,20 +67,13 @@ def main():
             inner = MeanReversionStrategy(**(sr_params or {}))
         except TypeError:
             inner = MeanReversionStrategy()
+
     strategy = StrategyTickAdapter(inner)
-
     engine = Engine(strategy)
-    # attach observers quietly
-    try:
-        engine.attach_observer(LoggerObserver())
-    except Exception:
-        pass
-    try:
-        engine.attach_observer(AlertObserver())
-    except Exception:
-        pass
 
-    # adapters
+    engine.attach_observer(LoggerObserver())
+    engine.attach_observer(AlertObserver())
+
     data_dir = PROJECT_ROOT / "data"
     y = YahooFinanceAdapter(data_dir / "external_data_yahoo.json")
     b = BloombergXMLAdapter(data_dir / "external_data_bloomberg.xml")
@@ -101,7 +95,17 @@ def main():
         ticks = [{"symbol": "AAPL", "price": 90}, {"symbol": "AAPL", "price": 110}]
 
     for t in ticks:
+        sym = getattr(t, "symbol", None) or t.get("symbol")
+        price = getattr(t, "price", None) or t.get("price")
+        print(f"Processing tick → {sym} @ {price}")
         engine.on_tick(t)
+
+    print("\n=== Trading Simulation Complete ===")
+    print(f"Final cash balance: {engine.book['cash']}")
+    print(f"Positions: {engine.book['positions']}")
+    print(f"Total portfolio value: {engine.get_portfolio_value()}")
+    print("====================================\n")
+
 
 if __name__ == "__main__":
     main()
