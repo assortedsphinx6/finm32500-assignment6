@@ -9,10 +9,10 @@ PROJECT_ROOT = Path(__file__).resolve().parents[1]
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
-from engine import Engine
-from data_loader import YahooFinanceAdapter, BloombergXMLAdapter
-from patterns.strategy import MeanReversionStrategy
-from patterns.observer import LoggerObserver, AlertObserver
+from src.engine import Engine
+from src.data_loader import YahooFinanceAdapter, BloombergXMLAdapter
+from src.patterns.strategy import MeanReversionStrategy
+from src.patterns.observer import LoggerObserver, AlertObserver
 
 
 class StrategyTickAdapter:

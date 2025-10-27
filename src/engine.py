@@ -1,6 +1,6 @@
-from patterns.observer import SignalPublisher
-from patterns.command import ExecuteOrderCommand, CommandInvoker
-from data_loader import MarketDataPoint
+from src.patterns.observer import SignalPublisher
+from src.patterns.command import ExecuteOrderCommand, CommandInvoker
+from src.data_loader import MarketDataPoint
 
 
 class Engine:
