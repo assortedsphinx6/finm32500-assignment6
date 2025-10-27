@@ -17,7 +17,6 @@ Each design pattern solves a realistic financial software problem and emphasizes
 - **data_loader.py:** Adapters for Yahoo and Bloomberg mock data.  
 - **models.py:** Instrument classes (Stock, Bond, ETF) and MarketDataPoint structure.  
 - **engine.py:** Core trade engine managing strategies, orders, and observers.  
-- **reporting.py:** Simple analytics summaries and output formatting.  
 - **main.py:** Orchestrates data loading, portfolio construction, and engine execution.
 
 ---
@@ -26,11 +25,11 @@ Each design pattern solves a realistic financial software problem and emphasizes
 Tests use `pytest` and `coverage` for validation.
 
 Run all tests:
-coverage run -m pytest -q
+`coverage run -m pytest -q`
 
 
 ## Run Simulation
-python -m src.main
+`python -m src.main`
 
 
 
